@@ -42,7 +42,7 @@
         $('#result').empty();
 
         // The bookmarklet
-        var stringifiedData = "{ author:  '<"+ $('#name').val() + " " + $('#email').val() + ">', secret: '" + $('#secret').val() + "' }";
+        var stringifiedData = "{ author:  '"+ $('#name').val() + " <" + $('#email').val() + ">', secret: '" + $('#secret').val() + "' }";
         var js = "javascript: (function (window) { $.gub = {}; $.gub.data = "+ stringifiedData +"; jsCode = document.createElement('script'); jsCode.setAttribute('src', '/bookmarklet/bookmarklet.js'); document.body.appendChild(jsCode); })(window); ";
         var bookmarklet = $('<a>').attr('href', js).append('Upload a File to Github Repo');
 
