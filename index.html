@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="js/jquery.ui.widget.js"></script>
+<script src="js/jquery.iframe-transport.js"></script>
+<script src="js/jquery.fileupload.js"></script>
+<script src="js/github-uploader.js"></script>
+
+<meta charset="utf-8">
+<title>File Upload</title>
+</head>
+<body>
+<div>
+  <input id="path" type="input" name="path">
+  <input id="file" type="file" name="file">
+</div>
+<div id="filename"></div>
+<script>
+GithubUploader("http://localhost:8080/upload",
+               {secret: "secret"
+                author: "author <author@something.com>"})
+</script>
+</body>
+</html>
