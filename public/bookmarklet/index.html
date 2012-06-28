@@ -1,0 +1,117 @@
+<html>
+<head>
+  <title>Create "Github Upload File Bookmarklet"</title>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+  <!-- JAVASCRIPT --------- -->
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#create').click(function(){
+
+
+        // A little validation........
+        var shouldReturn = false;
+        if ( $('#name').val().length < 1 ){
+            $('#name').css({ borderColor: 'red' });
+            shouldReturn = true;
+        }
+        else{
+          $('#name').css({ borderColor: 'green' });
+        }
+
+        if ( $('#email').val().length < 1 ){
+          $('#email').css({ borderColor: 'red' });
+          shouldReturn = true;
+        }
+        else{
+          $('#email').css({ borderColor: 'green' });
+        }
+
+        if ( $('#secret').val().length < 1 ){
+            $('#secret').css({ borderColor: 'red' });
+            shouldReturn = true;
+        }
+        else{
+          $('#secret').css({ borderColor: 'green' });
+        }
+
+        if (shouldReturn) return;
+        shouldReturn = false;
+
+        $('#result').empty();
+
+        // The bookmarklet
+        var stringifiedData = "{ author:  '<"+ $('#name').val() + " " + $('#email').val() + ">', secret: '" + $('#secret').val() + "' }";
+        var js = "javascript: (function (window) { $.gub = {}; $.gub.data = "+ stringifiedData +"; jsCode = document.createElement('script'); jsCode.setAttribute('src', '/bookmarklet/bookmarklet.js'); document.body.appendChild(jsCode); })(window); ";
+        var bookmarklet = $('<a>').attr('href', js).append('Upload a File to Github Repo');
+
+        // Append the bookmarklet
+        var $result = $("<div id='result'>");
+        $result.append(bookmarklet);
+        $result.append("<span class='quiet'>Drag to your bookmarks bar.</span>");
+
+        $('#result').remove();
+        $('body').append( $result );
+
+      });
+    });
+  </script>
+
+  <!-- CSS -->
+  <style type="text/css">
+
+    body{
+      font-family: 'arial'
+    }
+
+    input[type='text'], #create {
+      width: 600px; 
+      font-size: 18px;
+      padding: 5px;
+      display: block;
+      margin: 10px;
+      border: 5px solid #eee;
+      outline: none;
+    }
+
+    #create{
+      background: #ccc;
+      color: #666;
+    }
+
+    #create:hover{
+      background: #ddd;
+      cursor: pointer;
+      color: #333;
+    }
+
+    #create:active{ margin-top: 15px }
+
+    input[type='text']:focus{
+      border: 5px solid #ccc;
+      outline: nonel;
+    }
+
+    #result{
+      margin: 30px 10px;
+    }
+
+    #result a{ background: #C5DFFF; padding: 10px; ma }
+
+    .quiet{ color: #999; margin-left: 10px; font-size: 10px; font-style: italic }
+
+  </style>
+
+</head>
+<body>
+
+  <h2>Create a Github Upload Bookmarklet</h2>
+  <input id='name' type='text' placeholder='name (first and last)'>
+  <input id='email' type='text' placeholder='email'>
+  <input id='secret' type='text' placeholder='secret'>
+
+  <button id='create'>Create Bookmarklet</button>
+
+</body>
+</html>
