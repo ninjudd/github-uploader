@@ -12,7 +12,7 @@ function GithubUploader(url, opts) {
         url: url,
         formData: data,
         done: function (e, data) {
-            $("#filename").html(data.result)
+            $("#filename").html("<code>" + data.result + "</code>")
         }
     })
 }
