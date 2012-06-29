@@ -61,7 +61,7 @@ function handleReturnedFileData(data){
   if ($textArea.length > 0){
     var oldText   = $textArea.val();
     oldText       = (oldText.length > 0) ?  oldText + "\n" : oldText;
-    var newText   =  oldText + "\n" + markdown; 
+    var newText   =  oldText + markdown; 
     $textArea.val(newText).focus();
     $textArea[0].selectionStart = newText.length;
     toggle();
