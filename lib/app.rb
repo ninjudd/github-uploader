@@ -56,31 +56,23 @@ class App < Sinatra::Base
   def write_file(filename, tempfile)
     fullpath = File.join(DEST, filename)
 
+    dir  = File.dirname(fullpath)
+    ext  = File.extname(fullpath)
+    base = File.basename(fullpath, ext)
+    num  = 1
+
     # If the file exists and is not identical, then we need to find a unique filename.
-    if File.exists?(fullpath)
-      return if File.identical?(filename, tempfile.path)
+    while (File.exists?(fullpath))
+      return filename if FileUtils.identical?(fullpath, tempfile.path)
 
-      dir  = File.dirname(fullpath)
-      ext  = File.extname(fullpath)
-      base = File.basename(fullpath, ext)
-
-      fullpath = unique_filename(dir, base, ext)
+      fullpath = File.join(dir, "#{base}-#{num += 1}#{ext}")
       filename = with_basename(filename, File.basename(fullpath))
     end
 
     FileUtils.mkdir_p(File.dirname(fullpath))
-
     File.open(fullpath, 'wb') do |file|
       file.write(tempfile.read)
     end
-
-    filename
-  end
-
-  def unique_filename(dir, base, ext, num = 2)
-    begin
-      filename = File.join(dir, "#{base}-#{num}#{ext}")
-    end while (File.exists?(filename))
 
     filename
   end
