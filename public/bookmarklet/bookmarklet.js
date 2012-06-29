@@ -70,11 +70,20 @@ function handleReturnedFileData(data){
   if (re.exec(data.type)) markdown = "!" + markdown; 
 
   var $textArea = $('textarea:visible').first();
-  var oldText   = $textArea.val();
-  oldText       = (oldText.length > 0) ?  oldText + "\n" : oldText;
-  var newText   =  oldText + "\n" + markdown; 
-  $textArea.val(newText).focus();
-  $textArea[0].selectionStart = newText.length;
+
+  if ($textArea.length > 0){
+    var oldText   = $textArea.val();
+    oldText       = (oldText.length > 0) ?  oldText + "\n" : oldText;
+    var newText   =  oldText + "\n" + markdown; 
+    $textArea.val(newText).focus();
+    $textArea[0].selectionStart = newText.length;
+  }
+  else{
+    var $result = $("<input type='text' class='gub-pasty-result'>").css({ width: '100%', border: '1px solid #ddd', marginTop: 10, padding: 5, fontSize: 16 }).val(markdown);
+    $content.append($result);
+    $result.focus().select();
+  }
+
   close();
 }
 
