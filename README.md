@@ -1,5 +1,5 @@
-github-file-upload
-==================
+Github Upload Bookmarklet
+=========================
 
 Add file attachment capabilities to Github:issues and wikis.
 
