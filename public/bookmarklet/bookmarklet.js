@@ -29,7 +29,7 @@ function bindInputChange(){
 
 function bindFileUpload(){
   $.gub.$file.fileupload({
-      url: $.gub.origin + "upload",
+      url: $.gub.origin + "/upload",
       formData: $.gub.data,
       dropZone: $.gub.$dropzone,
       start: function(){
