@@ -26,16 +26,10 @@ class App < Sinatra::Base
         filename = File.join(path, filename)
       end
 
-      fullpath = File.join(DEST, filename)
-      FileUtils.mkdir_p(File.dirname(fullpath))
-
       # Make sure the git repo is up to date before writing the file.
       system "cd #{DEST} && git pull"
 
-      tempfile = params[:file][:tempfile]
-      File.open(fullpath, 'wb') do |file|
-        file.write(tempfile.read)
-      end
+      filename = write_file(filename, params[:file][:tempfile])
 
       author = params[:author]
       raise "invalid author #{author}" unless author =~ /^[\w ]*<[\w.-@]+>$/
@@ -59,4 +53,40 @@ class App < Sinatra::Base
     File.read(File.join('public', 'index.html'))
   end
 
+  def write_file(filename, tempfile)
+    fullpath = File.join(DEST, filename)
+
+    # If the file exists and is not identical, then we need to find a unique filename.
+    if File.exists?(fullpath)
+      return if File.identical?(filename, tempfile.path)
+
+      dir  = File.dirname(fullpath)
+      ext  = File.extname(fullpath)
+      base = File.basename(fullpath, ext)
+
+      fullpath = unique_filename(dir, base, ext)
+      filename = with_basename(filename, File.basename(fullpath))
+    end
+
+    FileUtils.mkdir_p(File.dirname(fullpath))
+
+    File.open(fullpath, 'wb') do |file|
+      file.write(tempfile.read)
+    end
+
+    filename
+  end
+
+  def unique_filename(dir, base, ext, num = 2)
+    begin
+      filename = File.join(dir, "#{base}-#{num}#{ext}")
+    end while (File.exists?(filename))
+
+    filename
+  end
+
+  def with_basename(filename, base)
+    dir = File.dirname(filename)
+    dir == '.' ? base : File.join(dir, base)
+  end
 end
