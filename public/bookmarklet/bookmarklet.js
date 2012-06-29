@@ -58,7 +58,7 @@ function bindFileUpload(){
 function bindEsc(){
   $(document).keyup(function(e) {
     if (e.keyCode == 27) {  // esc key
-      kill();
+      close();
     } 
   });
 }
@@ -68,12 +68,15 @@ function handleReturnedFileData(data){
   re = /image/;
   if (re.exec(data.type)) markdown = "!" + markdown; 
 
-  var $result = $("<input type='text' class='gub-pasty-result'>").css({ width: '100%', border: '1px solid #ddd', marginTop: 10, padding: 5, fontSize: 16 }).val(markdown);
-  $content.append($result);
-  $result.focus().select();
+  var $textArea = $('textarea:visible').first();
+  var oldText   = $textArea.val();
+  var newText   = oldText + "\n" + markdown; 
+  $textArea.val(newText).focus();
+  $textArea[0].selectionStart = newText.length;
+  close();
 }
 
-function kill(){
+function close(){
   $overlay.remove();
 }
 
@@ -81,6 +84,17 @@ function disableBrowserDrop(){
   $(document).bind('drop dragover', function (e) {
     e.preventDefault();
   });
+}
+
+function moveCaretToEnd(el) {
+    if (typeof el.selectionStart == "number") {
+        el.selectionStart = el.selectionEnd = el.value.length;
+    } else if (typeof el.createTextRange != "undefined") {
+        el.focus();
+        var range = el.createTextRange();
+        range.collapse(false);
+        range.select();
+    }
 }
 
 function main(){
