@@ -9,31 +9,36 @@
     $(document).ready(function(){
       $('#create').click(function(){
 
+        var $body     = $('body');
+        var $name     = $('#name');
+        var $email    = $('#email');
+        var $secret   = $('#secret');
+
 
         // A little validation........
         var shouldReturn = false;
-        if ( $('#name').val().length < 1 ){
-            $('#name').css({ borderColor: 'red' });
+        if ( $name.val().length < 1 ){
+            $name.css({ borderColor: 'red' });
             shouldReturn = true;
         }
         else{
-          $('#name').css({ borderColor: 'green' });
+          $name.css({ borderColor: 'green' });
         }
 
-        if ( $('#email').val().length < 1 ){
-          $('#email').css({ borderColor: 'red' });
+        if ( $email.val().length < 1 ){
+          $email.css({ borderColor: 'red' });
           shouldReturn = true;
         }
         else{
-          $('#email').css({ borderColor: 'green' });
+          $email.css({ borderColor: 'green' });
         }
 
-        if ( $('#secret').val().length < 1 ){
-            $('#secret').css({ borderColor: 'red' });
+        if ( $secret.val().length < 1 ){
+            $secret.css({ borderColor: 'red' });
             shouldReturn = true;
         }
         else{
-          $('#secret').css({ borderColor: 'green' });
+          $secret.css({ borderColor: 'green' });
         }
 
         if (shouldReturn) return;
@@ -42,8 +47,8 @@
         $('#result').empty();
 
         // The bookmarklet
-        var stringifiedData = "{ author:  '"+ $('#name').val() + " <" + $('#email').val() + ">', secret: '" + $('#secret').val() + "' }";
-        var js = "javascript: (function (window) { $.gub = {}; $.gub.data = "+ stringifiedData +"; jsCode = document.createElement('script'); jsCode.setAttribute('src', '" + window.location.protocol + "//" + window.location.host + "/" + "bookmarklet/bookmarklet.js'); document.body.appendChild(jsCode); })(window); ";
+        var stringifiedData = "{ author:  '"+ $name.val() + " <" + $email.val() + ">', secret: '" + $secret.val() + "' }";
+        var js = "javascript: (function (window) { $.gub = {}; $.gub.origin = '" + window.location.protocol + "//" + window.location.host + "'; $.gub.data = "+ stringifiedData +"; jsCode = document.createElement('script'); jsCode.setAttribute('src', $.gub.origin + '/bookmarklet/bookmarklet.js'); document.body.appendChild(jsCode); })(window); ";
         var bookmarklet = $('<a>').attr('href', js).append('Upload a File to Github Repo');
 
         // Append the bookmarklet
@@ -52,7 +57,7 @@
         $result.append("<span class='quiet'>Drag to your bookmarks bar.</span>");
 
         $('#result').remove();
-        $('body').append( $result );
+        $body.append( $result );
 
       });
     });
@@ -65,7 +70,7 @@
       font-family: 'arial'
     }
 
-    input[type='text'], #create {
+    input[type='text'].user-info, #create {
       width: 600px; 
       font-size: 18px;
       padding: 5px;
@@ -107,9 +112,9 @@
 <body>
 
   <h2>Create a Github Upload Bookmarklet</h2>
-  <input id='name' type='text' placeholder='name (first and last)'>
-  <input id='email' type='text' placeholder='email'>
-  <input id='secret' type='text' placeholder='secret'>
+  <input id='name'    class='user-info' type='text' placeholder='name (first and last)'>
+  <input id='email'   class='user-info' type='text' placeholder='email'>
+  <input id='secret'  class='user-info' type='text' placeholder='secret'>
 
   <button id='create'>Create Bookmarklet</button>
 

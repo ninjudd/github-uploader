@@ -1,5 +1,11 @@
 // Variables
-// var data = { secret: 'secret', author: 'Justin Balthrop <git@justinbalthrop.com>'};
+var $overlay      = $("<div id='gub-overlay'>").css({ position: 'absolute', top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.4)", zIndex: 10, fontFamily: 'Arial' });
+var $pseudoBody   = $("<div id='gub-pseudo-body'>").css({ margin: '100px auto', width: 500, border: '5px solid #eee', padding: '0 20px 20px 20px', background: 'white' });
+var $content      = $("<div id='gub-content'>").html(" <h2>Upload a file to Github</h2>").css({ position: 'relative' });
+var $closeMsg     = $("<div id='gub-close-msg'>").css({ position: 'absolute', top: -10, right: -10, fontSize: 9, color: '#aaa' }).text('Press [Esc] to close');
+var $path         = $("<input id='gub-path' type='input' name='path' placeholder='path/to'>").css({ width: '100%', fontSize: 14, padding: 3, marginBottom: 10  });
+var $file         = $("<input id='gub-file' type='file' name='file' size='300'>").css({ display: 'none' });
+var $dropzone     = $("<div id='gub-dropzone'>").css({width: '100%', height: 100, background: '#B1DEF2', textAlign: 'center', paddingTop: 20, border: '1px solid #ccc', cursor: 'pointer'}).html("<h1>Click or drag files here</h1>");
 
 // Grab jquery UI
 $.ajax({
@@ -30,36 +36,62 @@ function bindInputChange(){
 }
 
 function bindFileUpload(){
-
-  $("#file").fileupload({
-      url: window.location.protocol + "//" + window.location.host + "/upload",
+  $file.fileupload({
+      url: $.gub.origin + "/upload",
       formData: $.gub.data,
+      dropZone: $dropzone,
+      start: function(){
+        $dropzone.html('<h1>uploading...</h1>');
+      },
       done: function (e, data) {
-        console.log(data.result);
+        $dropzone.html('<h1>Click or drag files here</h1>');
+        handleReturnedFileData( JSON.parse(data.result) );
       }
   });
+
+  $dropzone.click(function(){
+    $file.click();
+  });
+
 }
 
 function bindEsc(){
   $(document).keyup(function(e) {
-    if (e.keyCode == 27) { 
-      $("#overlay").remove();
-    }   // esc
+    if (e.keyCode == 27) {  // esc key
+      kill();
+    } 
+  });
+}
+
+function handleReturnedFileData(data){
+  var markdown = "[" + data.file + "](" + data.url + ")";
+  re = /image/;
+  if (re.exec(data.type)) markdown = "!" + markdown; 
+
+  var $result = $("<input type='text' class='gub-pasty-result'>").css({ width: '100%', border: '1px solid #ddd', marginTop: 10, padding: 5, fontSize: 16 }).val(markdown);
+  $content.append($result);
+  $result.focus().select();
+}
+
+function kill(){
+  $overlay.remove();
+}
+
+function disableBrowserDrop(){
+  $(document).bind('drop dragover', function (e) {
+    e.preventDefault();
   });
 }
 
 function main(){
-  var $overlay      = $("<div id='overlay'>").css({ position: 'absolute', top: 0, left: 0, width: "100%", height: "100%", background: "rgba(255,255,255,0.75)", zIndex: 10, fontFamily: 'Arial' });
-  var $pseudoBody   = $("<div id='pseudo-body'>").css({ margin: '100px auto', width: 500, border: '5px solid #eee', padding: '0 20px 20px 20px', background: 'white' });
-  var $form         = $("<div id='content'>").html(" <h2>Upload a file to Github: </h2>");
-  var $path         = $("<input id='path' type='input' name='path' placeholder='path/to'>").css({ width: '100%', fontSize: 14, padding: 3, marginBottom: 10  });
-  var $file         = $("<input id='file' type='file' name='file' size='300'>").css({width: '100%'});
-
-  $form.append($path);
-  $form.append($file);
+  $content.append($path);
+  $content.append($file);
+  $content.append($dropzone);
+  $content.append($closeMsg);
   $overlay.append($pseudoBody);
-  $pseudoBody.append($form);
+  $pseudoBody.append($content);
   $('body').append($overlay);
+  disableBrowserDrop();
   bindFileUpload();
   bindEsc();
 }
