@@ -29,9 +29,10 @@ function getFileUploadJS(){
 }
 
 function bindInputChange(){
-  $('#path').change(function(){
+  $path.keyup(function(){
+    console.log('changing');
     $.gub.data.path = $(this).val();
-    $("#file").fileupload( 'option', 'formData', $.gub.data);
+    $file.fileupload( 'option', 'formData', $.gub.data);
   });
 }
 
@@ -70,7 +71,8 @@ function handleReturnedFileData(data){
 
   var $textArea = $('textarea:visible').first();
   var oldText   = $textArea.val();
-  var newText   = oldText + "\n" + markdown; 
+  oldText       = (oldText.length > 0) ?  oldText + "\n" : oldText;
+  var newText   =  oldText + "\n" + markdown; 
   $textArea.val(newText).focus();
   $textArea[0].selectionStart = newText.length;
   close();
@@ -107,5 +109,6 @@ function main(){
   $('body').append($overlay);
   disableBrowserDrop();
   bindFileUpload();
+  bindInputChange();
   bindEsc();
 }
