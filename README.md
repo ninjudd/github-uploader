@@ -8,6 +8,9 @@ Add file attachment capabilities to Github:issues and wikis.
     git submodule init
     git submodule update
 
-    upload_dir=/path/to/repo upload_secret=yoursecret ruby server.rb
+    gem install sinatra
+    gem install rack-cors
 
-    open index.html
+    dest=/path/to/your/repo secret=secret raw_url=http://github.com/your/repo/raw/master ruby server.rb
+
+Then go to `localhost:8080` in your browser.

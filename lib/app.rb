@@ -55,7 +55,7 @@ class App < Sinatra::Base
     end
   end
 
-  get '/bookmarklet' do
+  get '/' do
     File.read(File.join('public', 'bookmarklet', 'index.html'))
   end
 
