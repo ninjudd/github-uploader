@@ -1,21 +1,13 @@
-// Variables
-var $overlay      = $("<div id='gub-overlay'>").css({ position: 'absolute', top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.4)", zIndex: 10, fontFamily: 'Arial' });
-var $pseudoBody   = $("<div id='gub-pseudo-body'>").css({ margin: '100px auto', width: 500, border: '5px solid #eee', padding: '0 20px 20px 20px', background: 'white' });
-var $content      = $("<div id='gub-content'>").html(" <h2>Upload a file to Github</h2>").css({ position: 'relative' });
-var $closeMsg     = $("<div id='gub-close-msg'>").css({ position: 'absolute', top: -10, right: -10, fontSize: 9, color: '#aaa' }).text('Press [Esc] to close');
-var $path         = $("<input id='gub-path' type='input' name='path' placeholder='path/to'>").css({ width: '100%', fontSize: 14, padding: 3, marginBottom: 10  });
-var $file         = $("<input id='gub-file' type='file' name='file' size='300'>").css({ display: 'none' });
-var $dropzone     = $("<div id='gub-dropzone'>").css({width: '100%', height: 100, background: '#B1DEF2', textAlign: 'center', paddingTop: 20, border: '1px solid #ccc', cursor: 'pointer'}).html("<h1>Click or drag files here</h1>");
-
-// Grab jquery UI
-$.ajax({
-  url: "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js",
-  dataType: "script",
-  success: function(){
-    getFileUploadJS();
-  }
-});
-
+function makeDOMVars(){
+  // Variables
+  $.gub.$overlay      = $("<div id='gub-overlay'>").css({ position: 'fixed', top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.4)", zIndex: 10, fontFamily: 'Arial' });
+  $.gub.$pseudoBody   = $("<div id='gub-pseudo-body'>").css({ margin: '100px auto', width: 500, border: '5px solid #eee', padding: '0 20px 20px 20px', background: 'white' });
+  $.gub.$content      = $("<div id='gub-content'>").html(" <h2>Upload a file to Github</h2>").css({ position: 'relative' });
+  $.gub.$closeMsg     = $("<div id='gub-close-msg'>").css({ position: 'absolute', top: -10, right: -10, fontSize: 9, color: '#aaa' }).text('Press [Esc] to close');
+  $.gub.$path         = $("<input id='gub-path' type='input' name='path' placeholder='path/to'>").css({ width: '100%', fontSize: 14, padding: 3, marginBottom: 10  });
+  $.gub.$file         = $("<input id='gub-file' type='file' name='file' size='200'>").css({ margin: '10px auto', width: 175 });
+  $.gub.$dropzone     = $("<div id='gub-dropzone'>").css({width: '100%', height: 100, background: '#B1DEF2', textAlign: 'center', paddingTop: 20, border: '1px solid #ccc', cursor: 'pointer'}).html("<h1>Drag file here</h1>");
+}
 
 // Grab fileupload.js
 function getFileUploadJS(){
@@ -29,29 +21,24 @@ function getFileUploadJS(){
 }
 
 function bindInputChange(){
-  $path.keyup(function(){
-    console.log('changing');
+  $.gub.$path.keyup(function(){
     $.gub.data.path = $(this).val();
-    $file.fileupload( 'option', 'formData', $.gub.data);
+    $.gub.$file.fileupload( 'option', 'formData', $.gub.data);
   });
 }
 
 function bindFileUpload(){
-  $file.fileupload({
-      url: $.gub.origin + "/upload",
+  $.gub.$file.fileupload({
+      url: $.gub.origin + "upload",
       formData: $.gub.data,
-      dropZone: $dropzone,
+      dropZone: $.gub.$dropzone,
       start: function(){
-        $dropzone.html('<h1>uploading...</h1>');
+        $('h1', $.gub.$dropzone).text('uploading...');
       },
       done: function (e, data) {
-        $dropzone.html('<h1>Click or drag files here</h1>');
+        $('h1', $.gub.$dropzone).text('Drag file here');
         handleReturnedFileData( JSON.parse(data.result) );
       }
-  });
-
-  $dropzone.click(function(){
-    $file.click();
   });
 
 }
@@ -59,7 +46,7 @@ function bindFileUpload(){
 function bindEsc(){
   $(document).keyup(function(e) {
     if (e.keyCode == 27) {  // esc key
-      close();
+      toggle();
     } 
   });
 }
@@ -77,18 +64,17 @@ function handleReturnedFileData(data){
     var newText   =  oldText + "\n" + markdown; 
     $textArea.val(newText).focus();
     $textArea[0].selectionStart = newText.length;
+    toggle();
   }
   else{
     var $result = $("<input type='text' class='gub-pasty-result'>").css({ width: '100%', border: '1px solid #ddd', marginTop: 10, padding: 5, fontSize: 16 }).val(markdown);
-    $content.append($result);
+    $.gub.$content.append($result);
     $result.focus().select();
   }
-
-  close();
 }
 
-function close(){
-  $overlay.remove();
+function toggle(){
+  $.gub.$overlay.toggle();
 }
 
 function disableBrowserDrop(){
@@ -98,26 +84,44 @@ function disableBrowserDrop(){
 }
 
 function moveCaretToEnd(el) {
-    if (typeof el.selectionStart == "number") {
-        el.selectionStart = el.selectionEnd = el.value.length;
-    } else if (typeof el.createTextRange != "undefined") {
-        el.focus();
-        var range = el.createTextRange();
-        range.collapse(false);
-        range.select();
-    }
+  if (typeof el.selectionStart == "number") {
+      el.selectionStart = el.selectionEnd = el.value.length;
+  } else if (typeof el.createTextRange != "undefined") {
+      el.focus();
+      var range = el.createTextRange();
+      range.collapse(false);
+      range.select();
+  }
 }
 
 function main(){
-  $content.append($path);
-  $content.append($file);
-  $content.append($dropzone);
-  $content.append($closeMsg);
-  $overlay.append($pseudoBody);
-  $pseudoBody.append($content);
-  $('body').append($overlay);
-  disableBrowserDrop();
-  bindFileUpload();
-  bindInputChange();
-  bindEsc();
+    makeDOMVars();
+    $.gub.$content.append($.gub.$path);
+    $.gub.$content.append($.gub.$file);
+    $.gub.$content.append($.gub.$dropzone);
+    $.gub.$dropzone.append($.gub.$file);
+    $.gub.$content.append($.gub.$closeMsg);
+    $.gub.$overlay.append($.gub.$pseudoBody);
+    $.gub.$pseudoBody.append($.gub.$content);
+    $('body').append($.gub.$overlay);
+    disableBrowserDrop();
+    bindFileUpload();
+    bindInputChange();
+    bindEsc();
+}
+
+// Grab jquery UI and get the ball rollin'
+if ($.gub.alive) {
+  $('.gub-pasty-result').hide();
+  toggle();
+}
+else{
+  $.ajax({
+    url: "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js",
+    dataType: "script",
+    success: function(){
+      $.gub.alive = true;
+      getFileUploadJS();
+    }
+  });
 }
