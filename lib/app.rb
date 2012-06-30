@@ -54,6 +54,7 @@ class App < Sinatra::Base
   end
 
   def write_file(filename, tempfile)
+    filename.gsub!(/\s+/, '_')
     fullpath = File.join(DEST, filename)
 
     dir  = File.dirname(fullpath)
