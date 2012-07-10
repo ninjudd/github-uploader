@@ -1,4 +1,4 @@
-Github Upload Bookmarklet
+github-uploader
 =========================
 
 Add file attachment capabilities to Github:issues and wikis.
