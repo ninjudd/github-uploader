@@ -12,7 +12,7 @@ function makeDOMVars(){
 // Grab fileupload.js
 function getFileUploadJS(){
   jQuery.ajax({
-    url: "https://raw.github.com/blueimp/jQuery-File-Upload/master/js/jquery.fileupload.js",
+    url: "http://www.geni.com/javascripts/jq.lib.fileupload.js",
     dataType: "script",
     success: function(){
       main();
