@@ -48,7 +48,7 @@
 
         // The bookmarklet
         var stringifiedData = "{ author:  '"+ $name.val() + " <" + $email.val() + ">', secret: '" + $secret.val() + "' }";
-        var js = "javascript: (function (window) { jQuery.gub = jQuery.gub || {}; jQuery.gub.origin = '" + window.location.protocol + "//" + window.location.host + window.location.pathname + "'; jQuery.gub.data = "+ stringifiedData +"; jsCode = document.createElement('script'); jsCode.setAttribute('src', jQuery.gub.origin + '/js/bookmarklet.js'); document.body.appendChild(jsCode); })(window); ";
+        var js = "javascript: (function (window) { jQuery.gub = jQuery.gub || {}; jQuery.gub.origin = '" + window.location.protocol + "//" + window.location.host + window.location.pathname + "'; jQuery.gub.data = "+ stringifiedData +"; jsCode = document.createElement('script'); jsCode.setAttribute('src', jQuery.gub.origin + '/js/bookmarklet.js?10192012'); document.body.appendChild(jsCode); })(window); ";
         var bookmarklet = $('<a>').attr('href', js).append('Upload to Github');
 
         // Append the bookmarklet
