@@ -12,7 +12,7 @@ function makeDOMVars(){
 // Grab fileupload.js
 function getFileUploadJS(){
   jQuery.ajax({
-    url: "http://www.geni.com/javascripts/jq.lib.fileupload.js",
+    url: "https://www.geni.com/javascripts/jq.lib.fileupload.js",
     dataType: "script",
     success: function(){
       main();
